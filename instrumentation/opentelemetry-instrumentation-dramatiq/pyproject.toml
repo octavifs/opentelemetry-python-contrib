@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+# opentelemetry-instrumentation plus the name of the library being instrument e.g
+name = "opentelemetry-instrumentation-dramatiq"
+dynamic = ["version"]
+# a description of the instrumentation e.g
+# description = "SQLAlchemy tracing for OpenTelemetry"
+description = "dramatiq tracing and metrics for OpenTelemetry"
+readme = "README.rst"
+license = "Apache-2.0"
+requires-python = ">=3.8"
+authors = [
+  { name = "OpenTelemetry Authors", email = "cncf-opentelemetry-contributors@lists.cncf.io" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+  "opentelemetry-api ~= 1.12",
+  "opentelemetry-instrumentation == 0.49b0.dev",
+]
+
+[project.optional-dependencies]
+instruments = [
+  "dramatiq >= 1.0.0",
+]
+
+[project.entry-points.opentelemetry_instrumentor]
+dramatiq = "opentelemetry.instrumentation.dramatiq:DramatiqInstrumentor"
+
+[project.urls]
+# url of the instrumentation e.g
+Homepage = "https://github.com/open-telemetry/opentelemetry-python-contrib/instrumentation/opentelemetry-instrumentation-dramatiq"
+
+[tool.hatch.version]
+# REPLACE ME: the path to the version file e.g
+path = "src/opentelemetry/instrumentation/dramatiq/version.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+  "/tests",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/opentelemetry"]
