@@ -20,19 +20,19 @@ Start broker backend
 
 ::
 
-    docker run -p 5672:5672 rabbitmq
+    docker run -p 6379:6379 redis
 
 Run instrumented actor
 
 .. code-block:: python
 
-    from dramatiq.brokers.rabbitmq import RabbitmqBroker
     import dramatiq
+    from dramatiq.brokers.redis import RedisBroker
+    from opentelemetry.instrumentation.dramatiq import DramatiqInstrumentor
 
-    DramatiqInstrumentor().instrument()
 
-    broker = RabbitmqBroker()
-    dramatiq.set_broker(broker)
+    broker = RedisBroker()
+    DramatiqInstrumentor().instrument(broker=broker)
 
     @dramatiq.actor
     def multiply(x, y):
