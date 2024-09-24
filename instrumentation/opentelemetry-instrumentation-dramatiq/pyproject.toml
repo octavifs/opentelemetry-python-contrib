@@ -29,7 +29,9 @@ classifiers = [
 ]
 dependencies = [
   "opentelemetry-api ~= 1.12",
-  "opentelemetry-instrumentation == 0.49b0.dev",
+  # Put this back for the PR
+  # "opentelemetry-instrumentation == 0.49b0.dev",
+  "opentelemetry-instrumentation >= 0.48b0",
 ]
 
 [project.optional-dependencies]
