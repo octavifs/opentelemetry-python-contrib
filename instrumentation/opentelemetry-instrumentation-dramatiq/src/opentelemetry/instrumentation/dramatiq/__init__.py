@@ -181,7 +181,9 @@ class _InstrumentationMiddleware(dramatiq.Middleware):
         current_message_attributes = self._get_message_attributes(message)
         current_process_attributes = self._get_process_attributes()
         now_millis = _current_millis()
-        # Adding up the processed message count with and without message attributes (actor and queue)
+        self.broker_queued_total.add(
+            0, {**current_message_attributes, **current_process_attributes}
+        )  # this should be 0, as we are processing the message, but will still trigger an update in the metric, so it will appear alongside the processed metric
         self.broker_processed_total.add(
             1, {**current_message_attributes, **current_process_attributes}
         )
@@ -323,10 +325,12 @@ class _InstrumentationMiddleware(dramatiq.Middleware):
     ):
         current_message_attributes = self._get_message_attributes(message)
         current_process_attributes = self._get_process_attributes()
-        # Adding up the queued message count with and without message attributes (actor and queue)
         self.broker_queued_total.add(
             1, {**current_message_attributes, **current_process_attributes}
         )
+        self.broker_processed_total.add(
+            0, {**current_message_attributes, **current_process_attributes}
+        ) # this should be 0, as we are queueing the message, but will still trigger an update in the metric, so it will appear alongside the queued metric
         message.options[_DRAMATIQ_MESSAGE_ENQUEUED_TIME_KEY] = _current_millis()
 
         retry_count = message.options.get("retries", 0)
