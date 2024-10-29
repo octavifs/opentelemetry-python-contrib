@@ -51,6 +51,7 @@ from time import time
 from typing import Any, Collection, Dict, Literal
 
 import dramatiq
+import dramatiq.middleware
 from opentelemetry import baggage, context, trace
 from opentelemetry.instrumentation.instrumentor import BaseInstrumentor
 from opentelemetry.metrics import get_meter_provider
@@ -386,9 +387,7 @@ class DramatiqInstrumentor(BaseInstrumentor):
     def instrumentation_dependencies(self) -> Collection[str]:
         return _instruments
 
-    def _instrument(self, broker: dramatiq.broker.Broker = None, **kwargs):
-        tracer_provider = kwargs.get("tracer_provider")
-
+    def instrument_broker(self, broker: dramatiq.broker.Broker, tracer_provider: trace.TracerProvider = None):
         # pylint: disable=attribute-defined-outside-init
         self._tracer = trace.get_tracer(
             __name__,
@@ -398,18 +397,32 @@ class DramatiqInstrumentor(BaseInstrumentor):
         )
         instrumentation_middleware = _InstrumentationMiddleware(self._tracer)
 
-        if broker is None:
-            broker = dramatiq.broker.get_broker()
-
         first_middleware = broker.middleware[0] if broker.middleware else None
         broker.add_middleware(instrumentation_middleware, before=type(first_middleware))
-        #broker.add_middleware(instrumentation_middleware)
-
-    def _uninstrument(self, broker: dramatiq.broker.Broker = None, **kwargs):
-        if broker is None:
-            broker = dramatiq.broker.get_broker()
+    
+    def uninstrument_broker(self, broker: dramatiq.broker.Broker):
         broker.middleware = [
             m
             for m in broker.middleware
             if not isinstance(m, _InstrumentationMiddleware)
         ]
+    
+    def _instrument(self, **kwargs):
+        tracer_provider = kwargs.get("tracer_provider")
+
+        # pylint: disable=attribute-defined-outside-init
+        self._tracer = trace.get_tracer(
+            __name__,
+            __version__,
+            tracer_provider,
+            schema_url="https://opentelemetry.io/schemas/1.11.0",
+        )
+
+        def instrumentation_middleware():
+            return _InstrumentationMiddleware(self._tracer)
+
+        dramatiq.middleware.default_middleware.insert(0, instrumentation_middleware)
+    
+    def _uninstrument(self, **kwargs):
+        broker = dramatiq.broker.get_broker()
+        self.uninstrument_broker(broker)
