@@ -401,9 +401,9 @@ class DramatiqInstrumentor(BaseInstrumentor):
         if broker is None:
             broker = dramatiq.broker.get_broker()
 
-        # first_middleware = broker.middleware[0] if broker.middleware else None
-        # broker.add_middleware(instrumentation_middleware, before=type(first_middleware))
-        broker.add_middleware(instrumentation_middleware)
+        first_middleware = broker.middleware[0] if broker.middleware else None
+        broker.add_middleware(instrumentation_middleware, before=type(first_middleware))
+        #broker.add_middleware(instrumentation_middleware)
 
     def _uninstrument(self, broker: dramatiq.broker.Broker = None, **kwargs):
         if broker is None:
