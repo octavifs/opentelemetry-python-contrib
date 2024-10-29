@@ -95,41 +95,41 @@ class _InstrumentationMiddleware(dramatiq.Middleware):
         # All metrics emitted have a dramatiq.process.pid and dramatiq.process.thread_id attribute, so you can
         # know which process and thread emitted the metric, and ultimately aggregate them, to compute a global view.
         self.broker_processed_total = meter.create_counter(
-            "dramatiq.messages.processed.total_count",
+            "dramatiq.metrics.messages.processed.total_count",
             description="Total number of messages processed since the broker started. Accounts for failed messages.",
         )
         self.broker_retried_total = meter.create_counter(
-            "dramatiq.messages.retried.total_count",
+            "dramatiq.metrics.messages.retried.total_count",
             description="Total number of messages processed that are retries since the broker started.",
         )
         self.broker_failed_total = meter.create_counter(
-            "dramatiq.messages.failed.total_count",
+            "dramatiq.metrics.messages.failed.total_count",
             description="Total number of processed messages that failed since the broker started.",
         )
         self.broker_queued_total = meter.create_counter(
-            "dramatiq.messages.queued.total_count",
+            "dramatiq.metrics.messages.queued.total_count",
             description="Total number of messages queued since the broker started.",
         )
         self.broker_delayed_total = meter.create_counter(
-            "dramatiq.messages.delayed.total_count",
+            "dramatiq.metrics.messages.delayed.total_count",
             description="Total number of messages delayed since the broker started.",
         )
 
         # Duration histograms
         self.broker_processed_duration = meter.create_histogram(
-            "dramatiq.messages.processed.duration",
+            "dramatiq.metrics.messages.processed.duration",
             unit="ms",
             description="Milliseconds spent processing.",
         )
 
         self.broker_queued_duration = meter.create_histogram(
-            "dramatiq.messages.queued.duration",
+            "dramatiq.metrics.messages.queued.duration",
             unit="ms",
             description="Milliseconds spent queued.",
         )
 
         self.broker_delayed_duration = meter.create_histogram(
-            "dramatiq.messages.delayed.duration",
+            "dramatiq.metrics.messages.delayed.duration",
             unit="ms",
             description="Milliseconds spent delayed.",
         )
