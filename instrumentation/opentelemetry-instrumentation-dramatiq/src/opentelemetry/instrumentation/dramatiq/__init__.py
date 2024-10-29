@@ -283,11 +283,9 @@ class _InstrumentationMiddleware(dramatiq.Middleware):
         if span.is_recording():
             span_attributes = self._get_span_attributes("process", message)
             if exception is not None:
-                span_attributes["dramatiq.exception"] = type(exception).__name__
-                span_attributes["dramatiq.traceback"] = traceback.format_exc(limit=30)
-                span_attributes["dramatiq.is_failed"] = True
-            else:
-                span_attributes["dramatiq.is_failed"] = False
+                span_attributes["dramatiq.message.exception"] = type(exception).__name__
+                span_attributes["dramatiq.message.traceback"] = traceback.format_exc(limit=30)
+            span_attributes["dramatiq.message.failed"] = message.failed
             span.set_attributes(span_attributes)
 
         activation.__exit__(None, None, None)
