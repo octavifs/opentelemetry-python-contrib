@@ -67,10 +67,10 @@ _DRAMATIQ_MESSAGE_ACTION_KEY = "dramatiq.action"
 
 _DRAMATIQ_MESSAGE_ACTOR_KEY = "dramatiq.actor_name"
 _DRAMATIQ_MESSAGE_QUEUE_KEY = "dramatiq.queue_name"
-_DRAMATIQ_MESSAGE_ID_KEY = "dramatiq.message_id"
-_DRAMATIQ_MESSAGE_REDIS_ID_KEY = "dramatiq.message_redis_id"
+_DRAMATIQ_MESSAGE_ID_KEY = "dramatiq.message.id"
+_DRAMATIQ_MESSAGE_REDIS_ID_KEY = "dramatiq.message.redis_id"
 
-_DRAMATIQ_MESSAGE_RETRY_COUNT_KEY = "dramatiq.retry_count"
+_DRAMATIQ_MESSAGE_RETRY_COUNT_KEY = "dramatiq.message.retry_count"
 
 _DRAMATIQ_MESSAGE_PROCESS_TIME_KEY = "opentelemetry_metrics.process_time"
 _DRAMATIQ_MESSAGE_ENQUEUED_TIME_KEY = "opentelemetry_metrics.enqueue_time"
