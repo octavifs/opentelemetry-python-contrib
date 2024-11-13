@@ -251,7 +251,7 @@ class _InstrumentationMiddleware(dramatiq.Middleware):
 
     def after_process_message(
         self,
-        _broker: dramatiq.Broker,
+        broker: dramatiq.Broker,
         message: dramatiq.Message,
         *,
         result=None,
@@ -286,6 +286,10 @@ class _InstrumentationMiddleware(dramatiq.Middleware):
             if exception is not None:
                 span_attributes["dramatiq.message.exception"] = type(exception).__name__
                 span_attributes["dramatiq.message.traceback"] = traceback.format_exc(limit=30)
+                # Also check whether this is an expected exception, and add it to the span
+                actor = broker.get_actor(message.actor_name)
+                throws = message.options.get("throws") or actor.options.get("throws")
+                span_attributes["dramatiq.message.throws_exception_raised"] = (throws and isinstance(exception, throws))
             span_attributes["dramatiq.message.failed"] = message.failed
             span.set_attributes(span_attributes)
 
